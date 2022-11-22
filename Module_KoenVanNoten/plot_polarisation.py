@@ -30,7 +30,7 @@ import matplotlib.ticker as ticker
 auto_freq = 0
 freq_range = 0
 A0_max = 2
-steps = 0.2
+steps = 0.5
 
 save_fig = 1	# save results to fig (default = png)
 out_folder = 'plot_polar/'
