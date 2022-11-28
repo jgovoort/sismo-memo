@@ -1,5 +1,62 @@
 import numpy as np
 import matplotlib.pyplot as plt
+import obspy
+import datetime
+import time
+
+
+def amp_noise_mean_median(root,stt,window_size, startdate, lowpass, highpass) :
+
+    startdate = datetime.datetime.strptime(startdate, '%Y.%m.%d')
+    startnumber = 3
+    days = 31 - startnumber
+
+    median = []
+    mean = []
+
+    for day in range(days) :
+        start = time.process_time()
+        date = startdate + datetime.timedelta(days = day)
+        datetimeStr = date.strftime("%Y.%m.%d.%H.%M.%S.000")
+        print(datetimeStr)
+        
+        signal = obspy.read(root+str(stt)+str(startnumber+day)+'.'+datetimeStr+'.Z.miniseed')
+        
+        if day == 0 :
+            starttime = signal[0].stats.starttime
+            endtime = signal[0].stats.endtime
+            datetimestarttime = datetime.datetime.strptime(str(starttime), 
+                                                           '%Y-%m-%dT%H:%M:%S.000000Z')
+            noise_time = [datetimestarttime]
+            t0 = starttime+(window_size*60)
+            t1 = t0+(window_size*60)
+        
+            nbrpoints = signal.copy()
+            nbrpoints = nbrpoints[0].trim(starttime=t0, endtime=t1)
+            nbrpoints = len(nbrpoints)
+            
+        window = 24*60/window_size
+        
+        signal.filter('lowpass', freq=lowpass).filter('highpass', freq=highpass)
+        
+        trace = signal[0].data
+        
+        for i in range(int(window)) :
+
+            
+            array = np.abs(trace[i*nbrpoints:(i+1)*nbrpoints])
+            #print(array)
+            mean.append(np.mean(array))
+            median.append(np.median(array))
+            if i > 0 and day == 0 :
+                noise_time.append(noise_time[i-1]+datetime.timedelta(minutes=window_size))
+            elif day > 0 :
+                base = int(day*window)
+                noise_time.append(noise_time[base+i-1]+datetime.timedelta(minutes=window_size))
+        end = time.process_time() 
+        print('Days '+str(day+startnumber)+' accomplished in '+str(end-start)+' seconds')
+    return noise_time, mean, median
+
 
 
 def hydronoise_plot(gauging_time, gauging_velos, temp_time, temp,
