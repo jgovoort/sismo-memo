@@ -3,7 +3,7 @@ import matplotlib.pyplot as plt
 import obspy
 import datetime
 import time
-
+import math
 
 def amp_noise_mean_median(root,stt,window_size, startdate, lowpass, highpass) :
 
@@ -14,6 +14,8 @@ def amp_noise_mean_median(root,stt,window_size, startdate, lowpass, highpass) :
     median = []
     mean = []
 
+    theta = []
+    
     for day in range(days) :
         start = time.process_time()
         date = startdate + datetime.timedelta(days = day)
@@ -21,6 +23,8 @@ def amp_noise_mean_median(root,stt,window_size, startdate, lowpass, highpass) :
         print(datetimeStr)
         
         signal = obspy.read(root+str(stt)+str(startnumber+day)+'.'+datetimeStr+'.Z.miniseed')
+        signalE = obspy.read(root+str(stt)+str(startnumber+day)+'.'+datetimeStr+'.E.miniseed')
+        signalN = obspy.read(root+str(stt)+str(startnumber+day)+'.'+datetimeStr+'.N.miniseed')
         
         if day == 0 :
             starttime = signal[0].stats.starttime
@@ -37,25 +41,48 @@ def amp_noise_mean_median(root,stt,window_size, startdate, lowpass, highpass) :
             
         window = 24*60/window_size
         
-        signal.filter('lowpass', freq=lowpass).filter('highpass', freq=highpass)
-        
+        if lowpass > 0 and highpass > 0 :
+            signal.filter('lowpass', freq=lowpass).filter('highpass', freq=highpass)
+            signalE.filter('lowpass', freq=lowpass).filter('highpass', freq=highpass)
+            signalN.filter('lowpass', freq=lowpass).filter('highpass', freq=highpass)
+            
         trace = signal[0].data
+        traceE = signalE[0].data
+        traceN = signalN[0].data
+        
+        
         
         for i in range(int(window)) :
 
             
             array = np.abs(trace[i*nbrpoints:(i+1)*nbrpoints])
+            arrayE = np.abs(traceE[i*nbrpoints:(i+1)*nbrpoints])
+            arrayN = np.abs(traceN[i*nbrpoints:(i+1)*nbrpoints])
+            
             #print(array)
-            mean.append(np.mean(array))
-            median.append(np.median(array))
+            mean.append([np.mean(array),np.mean(arrayE), np.mean(arrayN)])
+            
+            medE = np.median(arrayE)
+            medN = np.median(arrayN)
+            
+            median.append([np.median(array),medE,medN])
+            
+            theta.append(math.atan(medE/medN)*(360/math.pi))
+            
             if i > 0 and day == 0 :
-                noise_time.append(noise_time[i-1]+datetime.timedelta(minutes=window_size))
+                noise_time.append(noise_time[i-1]+datetime.timedelta(minutes=window_size))   
             elif day > 0 :
                 base = int(day*window)
                 noise_time.append(noise_time[base+i-1]+datetime.timedelta(minutes=window_size))
+                
         end = time.process_time() 
         print('Days '+str(day+startnumber)+' accomplished in '+str(end-start)+' seconds')
-    return noise_time, mean, median
+        
+        medianall = np.median(np.array(median), axis=1)
+        meanall = np.mean(np.array(mean), axis=1)
+        
+        
+    return noise_time, mean, median, meanall, medianall, theta
 
 
 
