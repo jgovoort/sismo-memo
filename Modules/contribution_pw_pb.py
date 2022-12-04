@@ -2,7 +2,7 @@ import numpy as np
 import datetime
 import matplotlib.pyplot as plt
 
-def pw_pb(median25, median1020, noise_time, nbrdays, name) :
+def pw_pb(median25, median1020, noise_time,gauging_time, gauging_velos, nbrdays, name) :
     pw25 = 20*np.log10(median25)
     pb1020 = 20*np.log10(median1020)
     pw25 -= np.min(pw25)
@@ -18,7 +18,7 @@ def pw_pb(median25, median1020, noise_time, nbrdays, name) :
     fig = plt.subplots(3, 1, figsize=(17, 15))
     ax1 = plt.subplot(3, 1, 1)
 
-    color = list(range(len(pwhus25)))
+    color = list(range(len(pw25)))
     color = np.array(color)/nbrdays
 
     z_date = [color,color]
