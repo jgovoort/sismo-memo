@@ -4,12 +4,14 @@ import obspy
 import datetime
 import time
 import math
+import os, sys
 
-def amp_noise_mean_median(root,stt,window_size, startdate, lowpass, highpass) :
-
+def amp_noise_mean_median(root,stt,window_size, startdate, days, lowpass, highpass) :
+    fileroot= os.listdir(root)
+    
     startdate = datetime.datetime.strptime(startdate, '%Y.%m.%d')
-    startnumber = 3
-    days = 31 - startnumber
+    #startnumber = 3
+    #days = 31 - startnumber
 
     median = []
     mean = []
@@ -22,9 +24,20 @@ def amp_noise_mean_median(root,stt,window_size, startdate, lowpass, highpass) :
         datetimeStr = date.strftime("%Y.%m.%d.%H.%M.%S.000")
         print(datetimeStr)
         
-        signal = obspy.read(root+str(stt)+str(startnumber+day)+'.'+datetimeStr+'.Z.miniseed')
-        signalE = obspy.read(root+str(stt)+str(startnumber+day)+'.'+datetimeStr+'.E.miniseed')
-        signalN = obspy.read(root+str(stt)+str(startnumber+day)+'.'+datetimeStr+'.N.miniseed')
+        for file in fileroot :
+            if file.startswith(stt) and file.endswith(datetimeStr+'.E.miniseed') :
+                signalE = obspy.read(root+file)
+            elif file.startswith(stt) and file.endswith(datetimeStr+'.N.miniseed') :
+                signalN  = obspy.read(root+file)
+            elif file.startswith(stt) and file.endswith(datetimeStr+'.Z.miniseed') :
+                signal = obspy.read(root+file) 
+        
+        
+        
+        
+        #signal = obspy.read(root+str(stt)+str(startnumber+day)+'.'+datetimeStr+'.Z.miniseed')
+        #signalE = obspy.read(root+str(stt)+str(startnumber+day)+'.'+datetimeStr+'.E.miniseed')
+        #signalN = obspy.read(root+str(stt)+str(startnumber+day)+'.'+datetimeStr+'.N.miniseed')
         
         if day == 0 :
             starttime = signal[0].stats.starttime
@@ -76,7 +89,7 @@ def amp_noise_mean_median(root,stt,window_size, startdate, lowpass, highpass) :
                 noise_time.append(noise_time[base+i-1]+datetime.timedelta(minutes=window_size))
                 
         end = time.process_time() 
-        print('Days '+str(day+startnumber)+' accomplished in '+str(end-start)+' seconds')
+        print('Days '+str(date)+' accomplished in '+str(end-start)+' seconds')
         
         medianall = np.median(np.array(median), axis=1)
         meanall = np.mean(np.array(mean), axis=1)
