@@ -1,6 +1,11 @@
-/.ipynb_checkpoint/*
+/.ipynb_checkpoints/*
 /res_continuous_HVSR/*
 /__pycache__/*
 /continuous_HVSR_lake/*
 /images_hvsr_gif/*
-
+/HVSR_453020739.gif
+/PCA-based-GPS-correction-minions.ipynb
+/DigiSolo.LOG
+/temp_pos_nodes/*
+/Modules/__pycache__/*
+/plot_ice_thick/*

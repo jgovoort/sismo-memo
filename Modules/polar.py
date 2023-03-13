@@ -20,7 +20,7 @@ def pol(direct, stt, n_Y) :
         for row in readcsv :
             if line == 1 :
                 X.append(float(row[0]))
-            elif line > 1 and X[0] != float(row[0]) :
+            elif line > 1 and X[0] != float(row[0]) : #regarde si la fréquence est la meme.
                 x = float(row[0])
                 X.append(x)
             elif line > 1 and X[0] == float(row[0]):

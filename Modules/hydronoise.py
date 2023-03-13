@@ -100,7 +100,11 @@ def amp_noise_mean_median(root,stt,window_size, startdate, days, lowpass, highpa
 
 
 def hydronoise_plot(gauging_time, gauging_velos, temp_time, temp,
-                   noise_time,noise_median, limit):
+                   noise_time,noise_median, limit = None, label_noise = 'PPSD', Yax_noise = 'PPSD', 
+                    label_gauging = 'Discharge', label_temp = 'Temperature', Title = 'PPSD, discharge, temperature'):
+    if limit == None :
+        limit = (np.min(noise_median)-2,np.max(noise_median)+2)
+
     fig = plt.subplots(3, 1, figsize=(15, 15))
 
     ax1 = plt.subplot(3, 1, 1)
@@ -108,25 +112,29 @@ def hydronoise_plot(gauging_time, gauging_velos, temp_time, temp,
 
     ax1.set_xlabel('Time') 
     ax1.set_ylabel('Débit (m$^3$/s)', color = 'blue') 
-    ax1.plot(gauging_time, gauging_velos, label = 'Débit | Station V550', c='blue')
+    ax1.plot(gauging_time, gauging_velos, label = label_gauging, c='blue')
     ax1.tick_params(axis ='y', labelcolor = 'blue') 
 
     # Adding Twin Axes
 
     ax2 = ax1.twinx() 
-
+    
+    mintemp = int(np.min(temp))
+    maxtemp = int(np.max(temp))
+    dtemp = maxtemp - mintemp
+    Ltemp = [mintemp, mintemp+(dtemp/3), mintemp+(2*dtemp/3), maxtemp]
     ax2.set_ylabel('Temperature (°C)'+24*' ', color = 'red')
-    ax2.set_ylim((12,17))
-    ax2.set_yticks([12.5,13,13.5,14,14.5,15])
-    ax2.plot(temp_time, temp, label = 'Température | Station V299', c='red', linestyle='--')
+    ax2.set_ylim((mintemp-0.5,maxtemp+dtemp))
+    ax2.set_yticks(Ltemp)
+    ax2.plot(temp_time, temp, label = label_temp, c='red', linestyle='--')
     ax2.tick_params(axis ='y', labelcolor = 'red') 
 
     ax3 = plt.subplot(3, 1, 2)
-
+    
     ax3.set_xlabel('Time') 
-    ax3.set_ylabel('Signal amplitude \n Median over a 1 minute moving window') 
+    ax3.set_ylabel(Yax_noise) 
     ax3.set_ylim(limit)
-    ax3.plot(noise_time,noise_median, label='SS_20739', c='grey')
+    ax3.plot(noise_time,noise_median, label=label_noise, c='grey')
     ax3.tick_params(axis ='y') 
 
     ax4 = ax3.twinx() 
@@ -135,21 +143,25 @@ def hydronoise_plot(gauging_time, gauging_velos, temp_time, temp,
     ax4.set_ylabel('Débit (m$^3$/s)'+18*' ', color = 'blue')
     ax4.set_ylim((10,100))
     ax4.set_yticks([20,30,40,50,60,70])
-    ax4.plot(gauging_time, gauging_velos, label = 'Débit | Station V550', c='blue')
+    ax4.plot(gauging_time, gauging_velos, c='blue')
     ax4.tick_params(axis ='y', labelcolor = 'blue') 
 
     ax5 = plt.subplot(3, 1, 3)
 
     ax5.set_xlabel('Time') 
-    ax5.set_ylabel('Signal amplitude \n Median over a 1 minute moving window') 
+    ax5.set_ylabel(Yax_noise) 
     ax5.set_ylim(limit)
-    ax5.plot(noise_time,noise_median, label='SS_20739', c='grey')
+    ax5.plot(noise_time,noise_median, c='grey')
     ax5.tick_params(axis ='y') 
 
     ax6 = ax5.twinx() 
+    
 
     ax6.set_ylabel('Temperature (°C)'+24*' ', color = 'red')
-    ax6.set_ylim((12,17))
-    ax6.set_yticks([12.5,13,13.5,14,14.5,15])
-    ax6.plot(temp_time, temp, label = 'Température | Station V299', c='red', linestyle='--')
+    ax6.set_ylim((mintemp-0.5,maxtemp+dtemp))
+    ax6.set_yticks(Ltemp)
+    ax6.plot(temp_time, temp, c='red', linestyle='--')
     ax6.tick_params(axis ='y', labelcolor = 'red') 
+    
+    plt.figlegend()
+    plt.suptitle(Title)
