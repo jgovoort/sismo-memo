@@ -9,3 +9,9 @@
 /temp_pos_nodes/*
 /Modules/__pycache__/*
 /plot_ice_thick/*
+/pca-gnss/*
+/VIRGIN-PCA-based-GPS-correction-minions.ipynb
+/temp-precip/*
+/PCA-corrected-locs-mean.txt
+/PCA-corrected-locs.txt
+/PCA-corrected-locs-without-highest.txt
