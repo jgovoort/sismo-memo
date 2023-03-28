@@ -9,14 +9,16 @@ The data are provided by the permanent stations of the Icelandic Meteorological 
 
 ### Jupyter Notebooks :
 
-**InterferoMsNoise.ipynb** : used to make DV/V plots between each station pairs.\\
+**InterferoMsNoise.ipynb** : used to make DV/V plots between each station pairs.
+
 **03_SW_Sensitivity_kernel.ipynb** : determine the sensitivity kernels of Rayleigh and Love wave based on a Vs and Vp model. Not available for now.
 
 ## Horizontal-to-vertical spectral ratio :
 
 ### Jupyter Notebooks :
 
-**Ice-thickness.ipynb** : used to compute the hvsr of each station based on the hvsrpy 1.0.0 Python package of Vanatassel 20xx. This notebook used also a simple model to retrieved the ice thickness of each sensors.\\
+**Ice-thickness.ipynb** : used to compute the hvsr of each station based on the hvsrpy 1.0.0 Python package of Vanatassel 20xx. This notebook used also a simple model to retrieved the ice thickness of each sensors.
+
 **Ice_polar.ipynb** : creates rotate plots from hvsrpy 1.0.0 Python package and Geopsy (Wathelet et al. 2017) and finds the azimuth of the maximum HV Amplitude.
 
 ## Glacial hydrological tremor :
@@ -29,5 +31,8 @@ The data are provided by the permanent stations of the Icelandic Meteorological 
 
 ### Jupyter Notebooks :
 
-**gnss-temp.ipynb** : extracts the GPS location and temperature of the 3 components SmartSolo from the DigiSolo.LOG.\\
+**gnss-temp.ipynb** : extracts the GPS location and temperature of the 3 components SmartSolo from the DigiSolo.LOG.
+
 **netCDF-reader.ipynb** : extracts the temperature, snow melt and precipitation from reanalyzed ERA-5 NetCDF file of Copernicus. 
+
+**hydro-balance.ipynb** : calculate the water balance of a watershed to understand the seismic wave dv/v.
