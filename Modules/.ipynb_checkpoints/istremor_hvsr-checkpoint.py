@@ -4,32 +4,43 @@ import numpy_indexed as npi
 from matplotlib.patches import Ellipse, Circle
 import datetime
 
+def find_nearest(array, value):
+    array = np.asarray(array)
+    idx = (np.abs(array - value)).argmin()
+    return idx
+
+
 def amp_stat(miniplotamp) :
     
     #computation of the MIN, MAX, MEAN of the amplitude for each frequency
     
-    miniplotMIN = np.amin(np.array(miniplotamp), axis = 0)
-    miniplotMAX = np.amax(np.array(miniplotamp), axis = 0)
-    miniplotMEAN = np.mean(np.array(miniplotamp), axis = 0)
+    miniplotMIN = np.amin(np.array(miniplotamp), axis = 1)
+    miniplotMAX = np.amax(np.array(miniplotamp), axis = 1)
+    miniplotSTD = np.std(np.array(miniplotamp), axis = 1)
+    miniplotMEAN = np.mean(np.array(miniplotamp), axis = 1)
     
-    return miniplotMIN, miniplotMAX, miniplotMEAN 
+    return miniplotMIN, miniplotMAX, miniplotSTD, miniplotMEAN 
 
-def hvsr_TimePlot(miniplotfrq,miniplotamp, ylimmin = None, ylimmax = None) :
+def hvsr_TimePlot(miniplotfrq,miniplotamp, namestt='N/A', ylimmin = None, ylimmax = None) :
 
-    miniplotMIN, miniplotMAX, miniplotMEAN = amp_stat(miniplotamp)
+    miniplotMIN, miniplotMAX, miniplotSTD, miniplotMEAN = amp_stat(miniplotamp)
                
-    plt.plot(miniplotfrq[0], miniplotMEAN, c='red', label='Mean')
-    plt.plot(miniplotfrq[0], miniplotMIN,c='grey', linestyle='--', label='Max')
-    plt.plot(miniplotfrq[0], miniplotMAX,c='grey', linestyle='--', label='Min')
+    plt.plot(miniplotfrq, miniplotMEAN, c='red', label='Mean')
+    plt.plot(miniplotfrq, miniplotMEAN+miniplotSTD,c='grey', linestyle='--', label='STD')
+    plt.plot(miniplotfrq, miniplotMEAN-miniplotSTD,c='grey', linestyle='--')
+    #plt.scatter(miniplotfrq, miniplotMIN,c='k', marker='+', s=5, label='Max')
+    #plt.scatter(miniplotfrq, miniplotMAX,c='k', marker='+', label='Min')
     plt.xscale('log')
     if ylimmin != None and ylimmax != None :
         plt.ylim(ylimmin,ylimmax)
+    plt.xticks(ticks=[.7,1,2,3,4,5,6], labels=[.7,1,2,3,4,5,6])
     plt.xlabel('Frequency f0 (Hz)')
-    plt.ylabel('H/V amplitude')
+    plt.ylabel('Continuous H/V amplitude')
+    plt.title('Stacked continuous H/V curve\n- Station %s -'%namestt)
     plt.legend()
     plt.show()
     
-def hv_cycle(miniplotfrq,miniplotamp,miniplottimestart,nbrdays,namestt=None,lowfrq = None,highfrq = None,startnbrdays=None) :
+def hv_cycle(miniplotfrq,miniplotamp,miniplottimestart,nbrdays,namestt=None,frq = None,lowfrq = None,highfrq = None,startnbrdays=None) :
     
     '''
     miniplotfrq : list or array containing the frequencies --> 2 dimensional array/list : n * m
@@ -53,7 +64,9 @@ def hv_cycle(miniplotfrq,miniplotamp,miniplottimestart,nbrdays,namestt=None,lowf
         highfrq = np.max(np.array(miniplotfrq[0]))
     if startnbrdays == None :
         startnbrdays = 0
-    
+    if frq != None : 
+        Idxfrq = find_nearest(miniplotfrq[0], frq)
+        
     miniplothour = []
     for elem in miniplottimestart :
         miniplothour.append(float(elem.hour)+float(elem.minute)/60) #append the hour of miniplottimestart
@@ -171,8 +184,11 @@ def hv_cycle(miniplotfrq,miniplotamp,miniplottimestart,nbrdays,namestt=None,lowf
     ax4.plot(miniplotfrq[0],miniplotMEAN, c='red', label='Mean')
     ax4.plot(miniplotfrq[0], miniplotMIN,c='grey', linestyle='--', label='Max')
     ax4.plot(miniplotfrq[0], miniplotMAX,c='grey', linestyle='--', label='Min')
-    ax4.plot([lowfrq,lowfrq],[0,maxAmp], label = 'Lowest value analysed')
-    ax4.plot([highfrq,highfrq],[0,maxAmp], label = 'Highest value analysed')
+    if frq != None :
+        ax4.scatter(miniplotfrq[0][Idxfrq], miniplotMEAN[Idxfrq], marker='+', c='k', s=200)
+    else :
+        ax4.plot([lowfrq,lowfrq],[0,maxAmp], label = 'Lowest value analysed')
+        ax4.plot([highfrq,highfrq],[0,maxAmp], label = 'Highest value analysed')
     ax4.set_ylim(0,maxAmp)
     ax4.set_xlabel('Frequency f0 (Hz)')
     ax4.set_ylabel('H/V amplitude')
@@ -218,5 +234,7 @@ def hv_cycle(miniplotfrq,miniplotamp,miniplottimestart,nbrdays,namestt=None,lowf
     ax6.set_ylabel('Frequency f0 (Hz)')
     ax6.set_xlabel('Hours in a day')
     ax6.legend(loc="lower left", mode="expand", ncol=2)
+    
+    plt.savefig('.\plot_ice_thick\hv_cycle\ablation_%s' %namestt)
 
     plt.show()

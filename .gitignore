@@ -16,3 +16,9 @@
 /PCA-corrected-locs.txt
 /PCA-corrected-locs-without-highest.txt
 /ppsd/*
+/era-5_quality/*
+/ice-velocity/*
+/plot_hydro/*
+/plot_ice_thick/*
+/plot_interfero/*
+/plot_polar/*
