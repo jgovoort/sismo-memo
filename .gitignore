@@ -11,13 +11,18 @@
 /plot_ice_thick/*
 /pca-gnss/*
 /VIRGIN-PCA-based-GPS-correction-minions.ipynb
-/temp-precip/*
+#/temp-precip/*
+/temp-precip/adaptor.*
+/temp-precip/*.zip
+/temp-precip/20*-iceland-hourly.nc
+/temp-precip/megnette*
 /PCA-corrected-locs-mean.txt
 /PCA-corrected-locs.txt
 /PCA-corrected-locs-without-highest.txt
 /ppsd/*
-/era-5_quality/*
-/ice-velocity/*
+/era-5_quality/*.png
+/era-5_quality/Snow_Ice_temp.*
+#/ice-velocity/*
 /plot_hydro/*
 /plot_ice_thick/*
 /plot_interfero/*
@@ -26,3 +31,5 @@
 /Grims_Varia/*
 /image-reader.ipynb
 /surprise*
+*/.ipynb_checkpoints/*
+/ice-velocity/*
