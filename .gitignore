@@ -21,7 +21,7 @@
 /PCA-corrected-locs-without-highest.txt
 /ppsd/*
 /era-5_quality/*.png
-/era-5_quality/Snow_Ice_temp.*
+/era-5_quality/Snow_Ice_temp.xlsx
 #/ice-velocity/*
 /plot_hydro/*
 /plot_ice_thick/*
